@@ -28,7 +28,7 @@ class HBNBCommand(cmd.Cmd):
     }
 
     def emptyline(self):
-        """Ignore empty spaces."""
+        """Ignore empty lines."""
         pass
 
     def do_quit(self, line):
@@ -46,7 +46,8 @@ class HBNBCommand(cmd.Cmd):
         """
         try:
             if not line:
-                raise SyntaxError()
+                raise SyntaxError("** class name missing **")
+                
             my_list = line.split(" ")
 
             kwargs = {}
@@ -61,7 +62,7 @@ class HBNBCommand(cmd.Cmd):
                         continue
                 kwargs[key] = value
 
-            if kwargs == {}:
+            if not kwargs:
                 obj = eval(my_list[0])()
             else:
                 obj = eval(my_list[0])(**kwargs)
@@ -69,22 +70,23 @@ class HBNBCommand(cmd.Cmd):
             print(obj.id)
             obj.save()
 
-        except SyntaxError:
-            print("** class name missing **")
+        except SyntaxError as e:
+            print(e)
         except NameError:
             print("** class doesn't exist **")
 
     def do_show(self, line):
-        """Prints the string representation of an instance
+        """Prints the string representation of an instance.
         Exceptions:
-            SyntaxError: when there is no args given
-            NameError: when there is no object taht has the name
+            SyntaxError: when there are no args given
+            NameError: when there is no object that has the name
             IndexError: when there is no id given
             KeyError: when there is no valid id given
         """
         try:
             if not line:
-                raise SyntaxError()
+                raise SyntaxError("** class name missing **")
+                
             my_list = line.split(" ")
             if my_list[0] not in self.__classes:
                 raise NameError()
@@ -96,8 +98,8 @@ class HBNBCommand(cmd.Cmd):
                 print(objects[key])
             else:
                 raise KeyError()
-        except SyntaxError:
-            print("** class name missing **")
+        except SyntaxError as e:
+            print(e)
         except NameError:
             print("** class doesn't exist **")
         except IndexError:
@@ -106,16 +108,17 @@ class HBNBCommand(cmd.Cmd):
             print("** no instance found **")
 
     def do_destroy(self, line):
-        """Deletes an instance based on the class name and id
+        """Deletes an instance based on the class name and id.
         Exceptions:
-            SyntaxError: when there is no args given
-            NameError: when there is no object taht has the name
+            SyntaxError: when there are no args given
+            NameError: when there is no object that has the name
             IndexError: when there is no id given
             KeyError: when there is no valid id given
         """
         try:
             if not line:
-                raise SyntaxError()
+                raise SyntaxError("** class name missing **")
+                
             my_list = line.split(" ")
             if my_list[0] not in self.__classes:
                 raise NameError()
@@ -128,8 +131,8 @@ class HBNBCommand(cmd.Cmd):
                 storage.save()
             else:
                 raise KeyError()
-        except SyntaxError:
-            print("** class name missing **")
+        except SyntaxError as e:
+            print(e)
         except NameError:
             print("** class doesn't exist **")
         except IndexError:
@@ -140,7 +143,8 @@ class HBNBCommand(cmd.Cmd):
     def do_all(self, line):
         """Usage: all or all <class> or <class>.all()
         Display string representations of all instances of a given class.
-        If no class is specified, displays all instantiated objects."""
+        If no class is specified, displays all instantiated objects.
+        """
         if not line:
             o = storage.all()
             print([o[k].__str__() for k in o])
@@ -157,10 +161,10 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
 
     def do_update(self, line):
-        """Updates an instanceby adding or updating attribute
+        """Updates an instance by adding or updating an attribute.
         Exceptions:
-            SyntaxError: when there is no args given
-            NameError: when there is no object taht has the name
+            SyntaxError: when there are no args given
+            NameError: when there is no object that has the name
             IndexError: when there is no id given
             KeyError: when there is no valid id given
             AttributeError: when there is no attribute given
@@ -168,7 +172,8 @@ class HBNBCommand(cmd.Cmd):
         """
         try:
             if not line:
-                raise SyntaxError()
+                raise SyntaxError("** class name missing **")
+                
             my_list = split(line, " ")
             if my_list[0] not in self.__classes:
                 raise NameError()
@@ -187,9 +192,9 @@ class HBNBCommand(cmd.Cmd):
                 v.__dict__[my_list[2]] = eval(my_list[3])
             except Exception:
                 v.__dict__[my_list[2]] = my_list[3]
-                v.save()
-        except SyntaxError:
-            print("** class name missing **")
+            v.save()
+        except SyntaxError as e:
+            print(e)
         except NameError:
             print("** class doesn't exist **")
         except IndexError:
@@ -202,8 +207,7 @@ class HBNBCommand(cmd.Cmd):
             print("** value missing **")
 
     def count(self, line):
-        """count the number of instances of a class
-        """
+        """Count the number of instances of a class."""
         counter = 0
         try:
             my_list = split(line, " ")
@@ -219,14 +223,13 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
 
     def strip_clean(self, args):
-        """strips the argument and return a string of command
+        """Strips the argument and returns a string of command.
         Args:
             args: input list of args
         Return:
-            returns string of argumetns
+            returns string of arguments
         """
-        new_list = []
-        new_list.append(args[0])
+        new_list = [args[0]]
         try:
             my_dict = eval(
                 args[1][args[1].find('{'):args[1].find('}') + 1])
@@ -239,11 +242,11 @@ class HBNBCommand(cmd.Cmd):
             return new_list
         new_str = args[1][args[1].find('(') + 1:args[1].find(')')]
         new_list.append(" ".join(new_str.split(", ")))
-        return " ".join(i for i in new_list)
+        return " ".join(new_list)
 
     def default(self, line):
-        """retrieve all instances of a class and
-        retrieve the number of instances
+        """Retrieve all instances of a class and
+        retrieve the number of instances.
         """
         my_list = line.split('.')
         if len(my_list) >= 2:
@@ -270,4 +273,4 @@ class HBNBCommand(cmd.Cmd):
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
-
+    
