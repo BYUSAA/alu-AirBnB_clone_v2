@@ -240,7 +240,7 @@ class HBNBCommand(cmd.Cmd):
             new_list.append(((new_str.split(", "))[0]).strip('"'))
             new_list.append(my_dict)
             return new_list
-        new_str = args[1][args[1].find('(') + 1:args[1].find(')')]
+        new_str = args[1][arg[1].find('(') + 1:args[1].find(')')]
         new_list.append(" ".join(new_str.split(", ")))
         return " ".join(new_list)
 
