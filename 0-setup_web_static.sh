@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# web static development
+#web_static development
 
 sudo apt-get -y update
 sudo apt-get -y upgrade
