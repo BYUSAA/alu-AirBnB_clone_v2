@@ -5,6 +5,7 @@ from datetime import datetime
 
 env.hosts = ['xx-web-01', 'xx-web-02']  # Replace with your actual web server IPs
 
+
 def do_pack():
     """Generates a .tgz archive from the contents of the web_static folder"""
     try:
