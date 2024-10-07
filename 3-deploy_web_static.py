@@ -3,7 +3,9 @@ from fabric.api import env, run, put, local
 from os.path import exists
 from datetime import datetime
 
+
 env.hosts = ['xx-web-01', 'xx-web-02']  # Replace with your actual server IPs
+
 
 def do_pack():
     """Generates a .tgz archive from the web_static folder"""
@@ -15,6 +17,7 @@ def do_pack():
         return archive_path
     except:
         return None
+
 
 def do_deploy(archive_path):
     """Distributes an archive to the web servers"""
@@ -52,6 +55,7 @@ def do_deploy(archive_path):
         return True
     except:
         return False
+
 
 def deploy():
     """Creates and distributes an archive to the web servers"""
