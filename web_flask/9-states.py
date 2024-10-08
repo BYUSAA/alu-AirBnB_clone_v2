@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from flask import Flask, render_template
 from models import storage
 
@@ -22,7 +23,7 @@ def state_by_id(id):
     if state:
         cities = sorted(state.cities, key=lambda city: city.name)
         return render_template('9-states.html', state=state, cities=cities)
-    return "<h1>Not found!</h1>"
+    return "<h1>Not found!</h1>", 404  # Return 404 status for not found
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
