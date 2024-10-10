@@ -1,2 +1,2 @@
-web_flask/
-versions/
+.idea
+__pycache__/
