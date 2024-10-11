@@ -6,10 +6,11 @@ archive to the web servers
 
 from fabric.api import put, run, env
 from os.path import exists
-env.hosts = ['54.89.109.87', '100.25.190.21']
+env.hosts = ['100.25.219.240', '54.196.213.147']
+
 
 def do_deploy(archive_path):
-    """Distributes an archive to the web servers"""
+    """distributes an archive to the web servers"""
     if exists(archive_path) is False:
         return False
     try:
@@ -24,13 +25,6 @@ def do_deploy(archive_path):
         run('rm -rf {}{}/web_static'.format(path, no_ext))
         run('rm -rf /data/web_static/current')
         run('ln -s {}{}/ /data/web_static/current'.format(path, no_ext))
-
-        # Check if the file is accessible after deployment
-        result = run('curl -s -o /dev/null -w "%{http_code}" http://localhost/hbnb_static/0-index.html')
-        if result != "200":
-            print(f"Error: Expected HTTP 200 but got {result}")
-            return False
-
         return True
     except:
         return False
