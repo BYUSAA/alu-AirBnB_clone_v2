@@ -1,0 +1,78 @@
+import unittest
+import MySQLdb
+from models import storage
+from models.state import State
+from unittest import skipIf
+import os
+
+class TestDatabaseStorage(unittest.TestCase):
+    """Test cases for MySQL-based storage engine"""
+
+    @classmethod
+    def setUpClass(cls):
+        """Set up for database tests"""
+        cls.db_connection = MySQLdb.connect(
+            host=os.getenv("HBNB_MYSQL_HOST", "localhost"),
+            user=os.getenv("HBNB_MYSQL_USER", "root"),
+            passwd=os.getenv("HBNB_MYSQL_PWD", ""),
+            db=os.getenv("HBNB_MYSQL_DB", "hbnb_test_db")
+        )
+        cls.db_cursor = cls.db_connection.cursor()
+
+    @classmethod
+    def tearDownClass(cls):
+        """Tear down database connection"""
+        cls.db_cursor.close()
+        cls.db_connection.close()
+
+    def test_create_state(self):
+        """Test creating a State record in the database"""
+        # Get the initial count of states
+        self.db_cursor.execute("SELECT COUNT(*) FROM states")
+        initial_count = self.db_cursor.fetchone()[0]
+
+        # Create a new state using the console command or model method
+        new_state = State(name="California")
+        storage.new(new_state)
+        storage.save()
+
+        # Check the updated count in the database
+        self.db_cursor.execute("SELECT COUNT(*) FROM states")
+        updated_count = self.db_cursor.fetchone()[0]
+
+        self.assertEqual(updated_count, initial_count + 1)
+
+    @skipIf(os.getenv("HBNB_TYPE_STORAGE") != "db", "Test only applicable for database storage")
+    def test_delete_state(self):
+        """Test deleting a State record in the database"""
+        # Create a state and commit it to the database
+        new_state = State(name="Texas")
+        storage.new(new_state)
+        storage.save()
+
+        # Check if the state exists in the database
+        self.db_cursor.execute("SELECT * FROM states WHERE name = 'Texas'")
+        result = self.db_cursor.fetchone()
+        self.assertIsNotNone(result)
+
+        # Delete the state
+        storage.delete(new_state)
+        storage.save()
+
+        # Confirm the state no longer exists
+        self.db_cursor.execute("SELECT * FROM states WHERE name = 'Texas'")
+        result = self.db_cursor.fetchone()
+        self.assertIsNone(result)
+
+    def test_storage_isolation(self):
+        """Ensure storage is isolated for different environments"""
+        storage_type = os.getenv("HBNB_TYPE_STORAGE")
+        if storage_type == "file":
+            # Add a test specific to file storage if needed
+            pass
+        elif storage_type == "db":
+            # Add a test specific to db storage if needed
+            pass
+
+if __name__ == "__main__":
+    unittest.main()
